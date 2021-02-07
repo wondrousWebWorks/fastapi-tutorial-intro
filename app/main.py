@@ -12,12 +12,12 @@ class ModelName(str, Enum):
 app = FastAPI()
 
 fake_items_db = [
-    {"item_name": "One"},
-    {"item_name": "Two"},
-    {"item_name": "Three"},
-    {"item_name": "Four"},
-    {"item_name": "Five"},
-    {"item_name": "Six"},
+    {"item_one": "One"},
+    {"item_two": "Two"},
+    {"item_three": "Three"},
+    {"item_four": "Four"},
+    {"item_five": "Five"},
+    {"item_six": "Six"},
 ]
 
 
@@ -28,7 +28,9 @@ def read_root():
 
 @app.get("/items/{item_id}")
 async def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+    if q:
+        return {"item_id": item_id, "q": q}
+    return {"item_id": item_id}
 
 
 @app.get("/models/{model_name}")
