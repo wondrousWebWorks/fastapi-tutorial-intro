@@ -11,6 +11,15 @@ class ModelName(str, Enum):
 
 app = FastAPI()
 
+fake_items_db = [
+    {"item_name": "One"},
+    {"item_name": "Two"},
+    {"item_name": "Three"},
+    {"item_name": "Four"},
+    {"item_name": "Five"},
+    {"item_name": "Six"},
+]
+
 
 @app.get("/")
 def read_root():
@@ -36,3 +45,8 @@ async def get_model(model_name: ModelName):
 @app.get("/files/{file_path:path}")
 async def read_file(file_path: str):
     return {"file_path": file_path}
+
+
+@app.get("/items/")
+async def query_with_defaults(skip: int = 0, limit: int = 10):
+    return fake_items_db[skip: skip + limit]
