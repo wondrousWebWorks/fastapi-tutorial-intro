@@ -1,12 +1,20 @@
 from enum import Enum
 from typing import Optional
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 
 class ModelName(str, Enum):
     alexnet = "alexnet"
     resnet = "resnet"
     lenet = "lenet"
+
+
+class Item(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    tax: Optional[float] = None
 
 
 app = FastAPI()
@@ -50,9 +58,15 @@ async def get_model(model_name: ModelName):
         return {"model_name": model_name, "message": "Deep Learning FTW!"}
 
     if model_name.value == "lenet":
-        return {"model_name": model_name, "message": "LeCNN all images"}
+        return {
+            "model_name": model_name,
+            "message": "LeCNN all images"
+            }
 
-    return {"model_name": model_name, "message": "Have some residuals"}
+    return {
+        "model_name": model_name,
+        "message": "Have some residuals"
+        }
 
 
 @app.get("/files/{file_path:path}")
@@ -63,3 +77,12 @@ async def read_file(file_path: str):
 @app.get("/items/")
 async def query_with_defaults(skip: int = 0, limit: int = 10):
     return fake_items_db[skip: skip + limit]
+
+
+@app.post("/items/")
+async def create_item(item: Item):
+    item_dict = item.dict()
+    if item.tax:
+        price_with_tax = item.price + item.tax
+        item_dict.update({"price_with_tax": price_with_tax})
+    return item_dict
